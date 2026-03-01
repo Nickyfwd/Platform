@@ -30,5 +30,19 @@ ui/
   __init__.py
   hud.py
   screen.py
+<<<<<<< HEAD:logics.txt
 sd
+=======
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 3cb3985bfef7fb47a3967b77ab6fb6c310ac0972:logics
 
