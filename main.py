@@ -15,7 +15,7 @@ big_font = pygame.font.Font(None, 64)
 Gravity = 0.8
 
 #ПОДГОТОВКА К КАМЕРЕ
-LEVEL_WIDTH = 2000
+LEVEL_WIDTH = 2200
 
 class Platform:
 
@@ -38,6 +38,7 @@ class Enemy:
     def __init__(self,x, y, left_limit, right_limit):
         self.rect = pygame.Rect(x, y, 40,40)
         self.speed = 0
+        self.dir = 1
         self.left_limit = left_limit
         self.right_limit = right_limit
 
@@ -99,7 +100,7 @@ class Player:
         self.on_ground = False
 
         for p in platforms:
-            if p.rect.colliderect(p.rect) and self.vel_y > 0:
+            if self.rect.colliderect(p.rect) and self.vel_y > 0:
 
                 self.rect.bottom = p.rect.top
                 self.vel_y = 0
@@ -164,16 +165,25 @@ class Game:
         self.score = 0
         self.game_over = False
 
+        self.finish = pygame.Rect(2050, HEIGHT - 100, 40, 60)
+
     def collect_coins(self):
         for coin in self.coins[:]:
             if self.player.rect.colliderect(coin.rect):
-                self.player.lives -= 1
+                self.coins.remove()
+                self.score += 1
+
+    def enemy_hits(self):
+
+        for e in self.enemies:
+            if self.player.rect.colliderect(e.rect):
                 self.player.hit()
 
+    def check_finish(self):
+        if self.
     def update_camera(self):
 
-
-        self.camera_x = 0
+        self.camera_x = max(0, min(self.player.rect.centerx - WIDTH // 2, LEVEL_WIDTH - WIDTH))
 
     def run(self):
 
@@ -187,7 +197,7 @@ class Game:
 
                     if event.key == pygame.K_SPACE:
                         self.player.jump()
-                    if event.key == pygame.K_r and not self.game_over:
+                    if event.key == pygame.K_r and self.game_over:
                         self.reset()
 
                 if not self.game_over:
@@ -212,36 +222,28 @@ class Game:
                 for c in self.coins:
                     c.draw(screen, self.camera_x)
 
-                for z in self.coins:
+                for z in self.enemies:
                     z.draw(screen, self.camera_x)
 
                 self.player.draw(screen, self.camera_x)
-                screen.blit(font.render(f"Score: {self.score}", True, (0, 0, 0)), (10, 10))
-                screen.blit(font.render(f"Lives: {self.player.Lives}", True, (0, 0, 0)), (10, 10))
+                screen.blit(font.render(f"score: {self.score}", True, (0, 0, 0)), (10, 10))
+                screen.blit(font.render(f"lives: {self.player.lives}", True, (0, 0, 0)), (10, 40))
 
                 if self.game_over:
 
                     t1 = big_font.render("GAME OVER", True, (200, 0, 0))
                     t2 = font.render("Press R to start", True, (200, 0, 0))
 
-                    screen.blit(t1, t1.get_rect(center=(WIDTH // 2, HEIGHT // 2, - 20)))
-                    screen.blit(t2, t2.get_rect(center=(WIDTH // 2, HEIGHT // 2, + 25)))
+                    screen.blit(t1, t1.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 20)))
+                    screen.blit(t2, t2.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 25)))
 
                 pygame.display.flip()
                 clock.tick(60)
 
-            pygame.quit()
-            sys.exit()
+        pygame.quit()
+        sys.exit()
 
 Game().run()
-
-
-
-
-
-
-
-
 
 
 
